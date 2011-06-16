@@ -61,7 +61,7 @@ module DataMapper
 
         after :update do
           if clean? && pending_version_attributes.key?(on)
-            model::Version.create(attributes.merge(pending_version_attributes))
+            model::Version.create!(attributes.merge(pending_version_attributes))
             pending_version_attributes.clear
           end
         end
