@@ -73,7 +73,7 @@ module DataMapper
       module ClassMethods
         def const_missing(name)
           if name == :Version
-            model = DataMapper::Model.new
+            model = DataMapper::Model.new(name, self)
 
             properties.each do |property|
               type = case property
@@ -90,7 +90,7 @@ module DataMapper
               model.property(property.name, type, options)
             end
 
-            const_set(name, model)
+            model
           else
             super
           end
@@ -118,7 +118,7 @@ module DataMapper
         # @return <Collection>
         def versions
           version_model = model.const_get(:Version)
-          query = model.key.zip(key).map { |p, v| [ p.name, v ] }.to_hash
+          query = Hash[ model.key.zip(key).map { |p, v| [ p.name, v ] } ]
           query.merge(:order => version_model.key.map { |k| k.name.desc })
           version_model.all(query)
         end
